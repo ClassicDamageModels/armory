@@ -150,6 +150,8 @@ setInterval(async () => {
             character.realm
           ])
 
+          console.log('const realmResult', realmResult)
+
           const guildResult = await query('SELECT * FROM guild WHERE name = $1 AND realm_id = $2', [
             character.guild,
             realmResult.rows[0].id
