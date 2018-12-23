@@ -1,0 +1,23 @@
+version: '2'
+
+services:
+  db:
+    image: postgres:9.6.8
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=armory
+      - POSTGRES_DB=armory
+    ports:
+      - "5432:5432"
+
+  admin:
+    image: adminer
+    restart: always
+    depends_on:
+      - db
+    ports:
+      - 8080:8080
+volumes:
+  db-data:
+    driver: local
