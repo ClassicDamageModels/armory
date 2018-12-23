@@ -4,7 +4,8 @@
   "description": "",
   "main": "main.js",
   "scripts": {
-    "watch": "nodemon --exec babel-node src/main.js"
+    "watch": "nodemon --exec babel-node src/main.js",
+    "start": "babel-node src/main.js"
   },
   "author": "liekki",
   "license": "MIT",
