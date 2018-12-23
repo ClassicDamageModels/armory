@@ -5,6 +5,7 @@ import logger from './logger'
 import fs from 'fs'
 import { promisify } from 'util'
 import { query } from './db/driver'
+import { searchCharacters, getCharacter } from './db/character'
 import uuid from 'uuid/v1'
 import sha1 from 'sha1'
 
@@ -46,6 +47,18 @@ app.post('/upload', async (req, res) => {
   } catch (err) {
     logger.error(err)
   }
+})
+
+app.get('/search', async (req, res) => {
+  const result = await searchCharacters(req.query.name)
+  console.log('asdf', result)
+  res.status(200).json(result)
+})
+
+app.get('/get', async (req, res) => {
+  const result = await getCharacter(req.query.name, req.query.realm)
+  console.log('asdf', result)
+  res.status(200).json(result)
 })
 
 app.listen(config.port, () => {
