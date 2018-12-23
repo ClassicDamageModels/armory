@@ -15,13 +15,17 @@ CREATE TABLE uploader (
 
 CREATE TABLE realm (
   id        serial PRIMARY KEY,
-  name      text NOT NULL
+  name      text NOT NULL,
+
+  UNIQUE(name)
 );
 
 CREATE TABLE guild (
   id        serial PRIMARY KEY,
   name      text NOT NULL,
-  realm_id  integer REFERENCES realm
+  realm_id  integer REFERENCES realm,
+
+  UNIQUE(name, realm_id)
 );
 
 CREATE TABLE character (

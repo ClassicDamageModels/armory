@@ -27,7 +27,7 @@ export async function connect() {
 }
 
 export function query(sql, params) {
-  return Promise.resolve(pool.query(sql, params))
+  return pool.query(sql, params)
 }
 
 // Return dates as strings instead of Date objects
