@@ -13,6 +13,6 @@ COPY ./src /usr/src/app/src
 COPY ./.babelrc /usr/src/app
 COPY ./.env /usr/src/app
 
-EXPOSE 4444
+EXPOSE 3444
 
 CMD ["npm", "start"]
