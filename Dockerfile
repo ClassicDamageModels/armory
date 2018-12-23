@@ -11,7 +11,6 @@ RUN yarn install
 COPY ./src /usr/src/app/src
 
 COPY ./.babelrc /usr/src/app
-COPY ./.env /usr/src/app
 
 EXPOSE 3444
 
