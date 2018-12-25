@@ -4,7 +4,8 @@ import _ from 'lodash'
 
 const MAX_SEARCH_RESULTS = 10
 
-const searchCharacters = async str => {
+const searchCharacters = async (name, realm) => {
+  console.log(name, realm)
   const result = await query(
     `SELECT
       c.name, c.level, c.race, c.class, c.sex, c.inspected_at AS seen,
@@ -13,14 +14,14 @@ const searchCharacters = async str => {
     FROM character c
     LEFT JOIN realm r ON c.realm_id = r.id
     LEFT JOIN guild g ON c.guild_id = g.id
-    WHERE c.name
-    LIKE $1
+    WHERE c.name LIKE $1
+    AND LOWER(r.name) = $2
     LIMIT ${MAX_SEARCH_RESULTS}`,
-    ['%' + str + '%']
+    ['%' + name + '%', realm]
   )
 
   return _(result.rows)
-    .orderBy(['level', character => levenshtein.get(character.name, str)], ['desc', 'asc'])
+    .orderBy(['level', character => levenshtein.get(character.name, name)], ['desc', 'asc'])
     .value()
 }
 

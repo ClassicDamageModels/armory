@@ -50,7 +50,7 @@ app.post('/upload', async (req, res) => {
 })
 
 app.get('/search', async (req, res) => {
-  const result = await searchCharacters(req.query.name)
+  const result = await searchCharacters(req.query.name, req.query.realm)
   console.log('asdf', result)
   res.status(200).json(result)
 })
