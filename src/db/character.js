@@ -16,7 +16,7 @@ const searchCharacters = async (name, realm) => {
     FROM character c
     LEFT JOIN realm r ON c.realm_id = r.id
     LEFT JOIN guild g ON c.guild_id = g.id
-    WHERE c.name LIKE $1
+    WHERE LOWER(c.name) LIKE $1
     ${(realmName && 'AND LOWER(r.name) = $2') || ''}
     LIMIT ${MAX_SEARCH_RESULTS}`,
     realmName ? ['%' + characterName + '%', realmName] : ['%' + characterName + '%']
