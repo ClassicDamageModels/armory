@@ -60,9 +60,12 @@ app.get('/search', async (req, res) => {
 })
 
 app.get('/get', async (req, res) => {
-  const result = await getCharacter(req.query.name, req.query.realm)
-  console.log('asdf', result)
-  res.status(200).json(result)
+  if (req.query.name.length && req.query.realm.length) {
+    const result = await getCharacter(req.query.name, req.query.realm)
+    res.status(200).json(result)
+  } else {
+    res.status(400).send({ message: 'Fields "name" and "realm" are required.' })
+  }
 })
 
 app.listen(config.port, () => {

@@ -36,9 +36,9 @@ const getCharacter = async (name, realm) => {
       FROM character c
       LEFT JOIN realm r ON c.realm_id = r.id
       LEFT JOIN guild g ON c.guild_id = g.id
-      WHERE c.name = $1 AND r.name = $2
+      WHERE LOWER(c.name) = $1 AND LOWER(r.name) = $2
       LIMIT 1`,
-      [name, realm]
+      [name.toLowerCase(), realm.toLowerCase()]
     )
 
     if (result.rows.length) {
