@@ -159,7 +159,7 @@ const worker = async () => {
               character.realmId,
               character.name,
               character.level,
-              character.race,
+              character.race.replace(/scourge/, 'undead'),
               character.class,
               character.sex,
               guild,
