@@ -5,7 +5,9 @@ import _ from 'lodash'
 const MAX_SEARCH_RESULTS = 10
 
 const searchCharacters = async (name, realm) => {
-  console.log(name, realm)
+  const characterName = name && name.toLowerCase()
+  const realmName = realm && realm.toLowerCase()
+
   const result = await query(
     `SELECT
       c.name, c.level, c.race, c.class, c.sex, c.inspected_at AS seen,
@@ -15,9 +17,9 @@ const searchCharacters = async (name, realm) => {
     LEFT JOIN realm r ON c.realm_id = r.id
     LEFT JOIN guild g ON c.guild_id = g.id
     WHERE c.name LIKE $1
-    AND LOWER(r.name) = $2
+    ${(realmName && 'AND LOWER(r.name) = $2') || ''}
     LIMIT ${MAX_SEARCH_RESULTS}`,
-    ['%' + name + '%', realm]
+    realmName ? ['%' + characterName + '%', realmName] : ['%' + characterName + '%']
   )
 
   return _(result.rows)

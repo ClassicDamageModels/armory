@@ -50,9 +50,13 @@ app.post('/upload', async (req, res) => {
 })
 
 app.get('/search', async (req, res) => {
-  const result = await searchCharacters(req.query.name, req.query.realm)
-  console.log('asdf', result)
-  res.status(200).json(result)
+  const name = req.query.name
+  if (name.length) {
+    const result = await searchCharacters(name, req.query.realm)
+    res.status(200).json(result)
+  } else {
+    res.status(400).send({ message: 'Field "name" is required.' })
+  }
 })
 
 app.get('/get', async (req, res) => {
