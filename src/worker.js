@@ -80,7 +80,7 @@ const worker = async () => {
                   ]
 
                   return {
-                    slot: slots[slotId],
+                    slot: slots[slotId - 1],
                     id: parseInt(item),
                     enchant: parseInt(enchant),
                     gem1: parseInt(gem1),
