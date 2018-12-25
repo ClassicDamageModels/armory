@@ -20,6 +20,28 @@ const worker = async () => {
 
         const data = parser.parse(buffer.toString())
 
+        const slots = [
+          'head',
+          'amulet',
+          'shoulders',
+          'shirt',
+          'chest',
+          'belt',
+          'legs',
+          'boots',
+          'bracers',
+          'hands',
+          'ring1',
+          'ring2',
+          'trinket1',
+          'trinket2',
+          'cloak',
+          'weapon1',
+          'weapon2',
+          'ranged',
+          'tabard'
+        ]
+
         const playerData = await Promise.all(
           data.body[0].init[0].fields
             .filter(p => p.key.value !== 'OnlineData')
@@ -56,28 +78,6 @@ const worker = async () => {
                 .slice(0, -1)
                 .map(itemData => {
                   const [slotId, item, enchant, gem1, gem2, gem3, ...rest] = itemData.split(':')
-
-                  const slots = [
-                    'head',
-                    'amulet',
-                    'shoulders',
-                    'shirt',
-                    'chest',
-                    'belt',
-                    'legs',
-                    'boots',
-                    'bracers',
-                    'hands',
-                    'ring1',
-                    'ring2',
-                    'trinket1',
-                    'trinket2',
-                    'cloak',
-                    'weapon1',
-                    'weapon2',
-                    'ranged',
-                    'tabard'
-                  ]
 
                   return {
                     slot: slots[slotId - 1],
@@ -170,6 +170,8 @@ const worker = async () => {
           )
 
           if (characterUpsertResult.rows.length) {
+            const emptySlots = _.difference(slots, character.items.map(i => i.slot))
+
             character.items.forEach(async item => {
               await query(
                 `INSERT INTO itemslot (character_id, slot, item, enchant, gem1, gem2, gem3)
@@ -187,6 +189,14 @@ const worker = async () => {
                 ]
               )
             })
+
+            emptySlots.forEach(async emptySlot => {
+              await query(`DELETE FROM itemslot WHERE character_id = $1 AND slot = $2`, [
+                characterUpsertResult.rows[0].id,
+                emptySlot
+              ])
+            })
+
             logger.info(`Inserted/updated character #${characterUpsertResult.rows[0].id}!`)
 
             await query('UPDATE queue SET processed_at = NOW() WHERE id = $1', [next.id])
