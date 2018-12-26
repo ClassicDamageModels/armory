@@ -100,6 +100,31 @@ const worker = async () => {
                 realm
               ] = entry.playerData.split(':')
 
+              const talentAmounts = {
+                warrior: [23, 21, 22],
+                warlock: [21, 22, 21],
+                shaman: [20, 21, 20],
+                mage: [23, 22, 22],
+                priest: [22, 21, 21],
+                rogue: [21, 24, 22],
+                hunter: [21, 20, 23],
+                druid: [21, 21, 20],
+                paladin: [20, 22, 22]
+              }
+
+              const talents = [
+                entry.talentsData.substr(0, talentAmounts[className.toLowerCase()][0]),
+                entry.talentsData.substr(
+                  talentAmounts[className.toLowerCase()][0],
+                  talentAmounts[className.toLowerCase()][1]
+                ),
+                entry.talentsData.substr(
+                  talentAmounts[className.toLowerCase()][0] +
+                    talentAmounts[className.toLowerCase()][1],
+                  talentAmounts[className.toLowerCase()][2]
+                )
+              ]
+
               return {
                 name: entry.name,
                 level,
@@ -110,7 +135,7 @@ const worker = async () => {
                 sex: sex === 2 ? 'male' : 'female',
                 date: new Date(entry.dateData),
                 items,
-                talents: entry.talentsData,
+                talents,
                 realm: realm.replace(/#/, '')
               }
             })
@@ -150,11 +175,12 @@ const worker = async () => {
 
           const characterUpsertResult = await query(
             `INSERT INTO character (realm_id, name, level, race, class,
-            sex, guild_id, guild_rank, inspected_at, seen_by)
-          VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+            sex, guild_id, guild_rank, inspected_at, seen_by, tree1_pts, tree2_pts, tree3_pts)
+          VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
           ON CONFLICT (name, realm_id)
           DO UPDATE SET level = $3, race = $4, class = $5, sex = $6,
-          guild_id = $7, guild_rank = $8, inspected_at = $9, seen_by = $10 RETURNING id`,
+          guild_id = $7, guild_rank = $8, inspected_at = $9, seen_by = $10,
+          tree1_pts = $11, tree2_pts = $12, tree3_pts = $13 RETURNING id`,
             [
               character.realmId,
               character.name,
@@ -165,7 +191,10 @@ const worker = async () => {
               guild,
               character.guildRank,
               character.date,
-              next.uploader_id
+              next.uploader_id,
+              character.talents[0],
+              character.talents[1],
+              character.talents[2]
             ]
           )
 

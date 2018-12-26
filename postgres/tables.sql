@@ -40,6 +40,9 @@ CREATE TABLE character (
   guild_rank    integer NOT NULL,
   inspected_at  timestamp NOT NULL,
   seen_by       integer REFERENCES uploader,
+  tree1_pts     integer,
+  tree2_pts     integer,
+  tree3_pts     integer,
 
   UNIQUE (name, realm_id)
 );
