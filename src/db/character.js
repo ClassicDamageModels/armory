@@ -15,12 +15,13 @@ const searchCharacters = async (name, realm) => {
       c.sex, c.inspected_at AS seen,
       r.name AS realm,
       g.name AS guild,
-      levenshtein(LOWER(c.name), $1) AS distance
+      similarity(c.name, $1) AS sml
     FROM character c
     LEFT JOIN realm r ON c.realm_id = r.id
     LEFT JOIN guild g ON c.guild_id = g.id
-    ${(realmName && 'WHERE LOWER(r.name) = $2') || ''}
-    ORDER BY distance ASC
+    WHERE c.name % $1
+    ${(realmName && 'AND LOWER(r.name) = $2') || ''}
+    ORDER BY sml DESC
     LIMIT ${MAX_SEARCH_RESULTS}`,
     realmName ? ['%' + characterName + '%', realmName] : ['%' + characterName + '%']
   )
