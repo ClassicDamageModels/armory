@@ -10,7 +10,7 @@ const searchCharacters = async (name, realm) => {
 
   const result = await query(
     `SELECT
-      c.name, c.level, c.race, c.class, concat_ws('/', tree1_pts, tree2_pts, tree3_pts) AS spec, c.sex, c.inspected_at AS seen,
+      c.name, c.level, c.race, c.class, NULLIF(CONCAT_WS('/', tree1_pts, tree2_pts, tree3_pts), '') AS spec, c.sex, c.inspected_at AS seen,
       r.name AS realm,
       g.name as guild
     FROM character c
@@ -30,7 +30,7 @@ const searchCharacters = async (name, realm) => {
 const getCharacter = async (name, realm) => {
   try {
     const result = await query(
-      `SELECT c.id, c.name, c.level, c.race, c.class, concat_ws('/', tree1_pts, tree2_pts, tree3_pts) AS spec, c.sex, c.inspected_at AS seen,
+      `SELECT c.id, c.name, c.level, c.race, c.class, NULLIF(CONCAT_WS('/', tree1_pts, tree2_pts, tree3_pts), '') AS spec, c.sex, c.inspected_at AS seen,
         r.name AS realm,
         g.name as guild
       FROM character c
