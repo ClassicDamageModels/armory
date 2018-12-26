@@ -123,7 +123,7 @@ const worker = async () => {
                     talentAmounts[className.toLowerCase()][1],
                   talentAmounts[className.toLowerCase()][2]
                 )
-              ]
+              ].map(str => str.split('').reduce((acc, val) => acc + parseInt(val), 0))
 
               return {
                 name: entry.name,
