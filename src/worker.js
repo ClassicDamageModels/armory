@@ -176,11 +176,13 @@ const worker = async () => {
           const characterUpsertResult = await query(
             `INSERT INTO character (realm_id, name, level, race, class,
             sex, guild_id, guild_rank, inspected_at, seen_by, tree1_pts, tree2_pts, tree3_pts)
-          VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
-          ON CONFLICT (name, realm_id)
-          DO UPDATE SET level = $3, race = $4, class = $5, sex = $6,
-          guild_id = $7, guild_rank = $8, inspected_at = $9, seen_by = $10,
-          tree1_pts = $11, tree2_pts = $12, tree3_pts = $13 RETURNING id`,
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
+            ON CONFLICT (name, realm_id)
+            DO UPDATE SET level = $3, race = $4, class = $5, sex = $6,
+            guild_id = $7, guild_rank = $8, inspected_at = $9, seen_by = $10,
+            tree1_pts = $11, tree2_pts = $12, tree3_pts = $13
+            WHERE character.inspected_at < $9
+            RETURNING id`,
             [
               character.realmId,
               character.name,
@@ -225,13 +227,13 @@ const worker = async () => {
                 emptySlot
               ])
             })
-
             logger.info(`Inserted/updated character #${characterUpsertResult.rows[0].id}!`)
-
-            await query('UPDATE queue SET processed_at = NOW() WHERE id = $1', [next.id])
-
-            processing = false
+          } else {
+            logger.info(`Skipped a character due to data being stale.`)
           }
+
+          await query('UPDATE queue SET processed_at = NOW() WHERE id = $1', [next.id])
+          processing = false
         })
       } else {
         logger.info('No new jobs')
