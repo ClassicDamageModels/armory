@@ -51,7 +51,7 @@ CREATE TABLE character (
 
 CREATE TABLE itemslot (
   id            serial PRIMARY KEY,
-  character_id  integer REFERENCES character,
+  character_id  integer REFERENCES character ON DELETE CASCADE,
   slot          text NOT NULL,
   item          integer NOT NULL,
   enchant       integer NOT NULL,
