@@ -208,7 +208,7 @@ const worker = async () => {
                 `INSERT INTO itemslot (character_id, slot, item, enchant, gem1, gem2, gem3)
             VALUES ($1, $2, $3, $4, $5, $6, $7)
             ON CONFLICT (character_id, slot)
-            DO UPDATE SET item = $3, enchant = $4, gem1 = $5, gem2 = $6, gem3 = $6`,
+            DO UPDATE SET item = $3, enchant = $4, gem1 = $5, gem2 = $6, gem3 = $7`,
                 [
                   characterUpsertResult.rows[0].id,
                   item.slot,
