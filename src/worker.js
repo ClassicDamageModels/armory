@@ -7,7 +7,10 @@ import { query } from './db/driver'
 import { getNext } from './db/queue'
 import parser from 'luaparse'
 
+const JOB_INTERVAL_SECONDS = 2
+const NOTIFY_AFTER_SECONDS = 60
 let processing = false
+let countNoJobs = 0
 const read = promisify(fs.readFile)
 
 const worker = async () => {
@@ -15,6 +18,7 @@ const worker = async () => {
     try {
       const next = await getNext()
       if (next) {
+        countNoJobs = 0
         processing = true
         const buffer = await read(`${config.uploadDir}/${next.filename}`)
 
@@ -236,7 +240,10 @@ const worker = async () => {
           processing = false
         })
       } else {
-        logger.info('No new jobs')
+        countNoJobs++
+        if ((countNoJobs * JOB_INTERVAL_SECONDS) % NOTIFY_AFTER_SECONDS === 0) {
+          logger.info(`No new jobs for ${NOTIFY_AFTER_SECONDS} seconds.`)
+        }
       }
     } catch (err) {
       processing = false
@@ -247,4 +254,4 @@ const worker = async () => {
 }
 
 worker()
-setInterval(worker, 10000)
+setInterval(worker, JOB_INTERVAL_SECONDS * 1000)
