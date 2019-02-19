@@ -77,7 +77,7 @@ const worker = async () => {
               }
             })
             .map(entry => {
-              const items = entry.itemsData
+              const allItems = entry.itemsData
                 .split(',')
                 .slice(0, -1)
                 .map(itemData => {
@@ -92,6 +92,11 @@ const worker = async () => {
                     gem3: parseInt(gem3)
                   }
                 })
+
+              const currentItems = _(allItems)
+                .groupBy('slot')
+                .map(_.head)
+                .value()
 
               const [
                 race,
@@ -138,7 +143,7 @@ const worker = async () => {
                 guildRank,
                 sex: sex === 2 ? 'male' : 'female',
                 date: new Date(entry.dateData),
-                items,
+                items: currentItems,
                 talents,
                 realm: realm.replace(/#/, '')
               }
