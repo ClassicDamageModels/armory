@@ -159,19 +159,31 @@ const worker = async () => {
                 realmId: result.rows[0].id
               }
             })
-            .map(async character => {
+            .map(async characterPromise => {
+              const character = await characterPromise
               if (character.guild) {
                 const result = await query(
-                  `INSERT INTO guild (name, realm_id)
-                  VALUES ($1, $2)
-                  ON CONFLICT DO UPDATE SET name = $1
-                  RETURNING id`,
+                  `SELECT id FROM guild WHERE name = $1 AND realm_id = $2 LIMIT 1`,
                   [character.guild, character.realmId]
                 )
 
-                return {
-                  ...character,
-                  guildId: result.rows[0].id
+                if (result.rows.length) {
+                  return {
+                    ...character,
+                    guildId: result.rows[0].id
+                  }
+                } else {
+                  const result2 = await query(
+                    `INSERT INTO guild (name, realm_id)
+                    VALUES ($1, $2)
+                    RETURNING id`,
+                    [character.guild, character.realmId]
+                  )
+
+                  return {
+                    ...character,
+                    guildId: result2.rows[0].id
+                  }
                 }
               } else {
                 return character
