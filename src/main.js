@@ -14,7 +14,7 @@ import './worker'
 const write = promisify(fs.writeFile)
 const app = express()
 
-app.use(bodyParser.text({ type: '*/*' }))
+app.use(bodyParser.text({ type: '*/*', limit: '10mb' }))
 
 app.get('/ping', (req, res) => {
   res.status(200).json({ status: 'ok' })
