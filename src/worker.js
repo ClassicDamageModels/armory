@@ -94,6 +94,7 @@ const worker = async () => {
                 })
 
               const currentItems = _(allItems)
+                .take(19)
                 .groupBy('slot')
                 .map(_.head)
                 .value()
