@@ -253,10 +253,10 @@ const worker = async () => {
           } else {
             logger.info(`Skipped a character due to data being stale.`)
           }
-
-          await query('UPDATE queue SET processed_at = NOW() WHERE id = $1', [next.id])
-          processing = false
         })
+
+        await query('UPDATE queue SET processed_at = NOW() WHERE id = $1', [next.id])
+        processing = false
       } else {
         countNoJobs++
         if ((countNoJobs * JOB_INTERVAL_SECONDS) % NOTIFY_AFTER_SECONDS === 0) {
