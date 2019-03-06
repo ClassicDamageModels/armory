@@ -142,7 +142,7 @@ const worker = async () => {
                 class: className.toLowerCase(),
                 guild: guild === 'nil' ? '' : guild,
                 guildRank,
-                sex: sex === 2 ? 'male' : 'female',
+                sex: parseInt(sex) === 2 ? 'male' : 'female',
                 date: new Date(entry.dateData),
                 items: currentItems,
                 talents,
